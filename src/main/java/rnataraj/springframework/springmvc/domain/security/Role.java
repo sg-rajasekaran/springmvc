@@ -4,6 +4,7 @@ import rnataraj.springframework.springmvc.domain.AbstractDomainClass;
 import rnataraj.springframework.springmvc.domain.User;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 public class Role extends AbstractDomainClass {
     private String role;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
     private List<User> users = new ArrayList<>();
 

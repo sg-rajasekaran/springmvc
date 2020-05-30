@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
-@Profile("jpadao")
+@Profile("jpadao-donot use")
 public class UserServiceJpaDaoImpl extends AbstractJpaDaoService implements UserService {
 
     private EncryptionService encryptionService;
@@ -49,7 +49,6 @@ public class UserServiceJpaDaoImpl extends AbstractJpaDaoService implements User
     @Override
     public void delete(Integer id) {
         EntityManager em = emf.createEntityManager();
-
         em.getTransaction().begin();
         em.remove(em.find(User.class,id));
         em.getTransaction().commit();

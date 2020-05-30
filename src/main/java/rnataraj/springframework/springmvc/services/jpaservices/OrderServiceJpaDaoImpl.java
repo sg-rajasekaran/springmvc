@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
-@Profile("jpadao")
+@Profile("jpadao-do not use")
 public class OrderServiceJpaDaoImpl extends AbstractJpaDaoService implements OrderService {
     @Override
     public List<Order> listAll() {

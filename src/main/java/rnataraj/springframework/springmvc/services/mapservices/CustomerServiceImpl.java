@@ -1,7 +1,10 @@
 package rnataraj.springframework.springmvc.services.mapservices;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import rnataraj.springframework.springmvc.commands.CustomerForm;
+import rnataraj.springframework.springmvc.convertors.CustomerFormToCustomer;
 import rnataraj.springframework.springmvc.domain.Address;
 import rnataraj.springframework.springmvc.domain.Customer;
 import rnataraj.springframework.springmvc.domain.DomainObject;
@@ -13,6 +16,13 @@ import java.util.*;
 @Service
 @Profile("map")
 public class CustomerServiceImpl extends AbstractMapService implements CustomerService {
+
+    private CustomerFormToCustomer customerFormToCustomer;
+
+    @Autowired
+    public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
+        this.customerFormToCustomer = customerFormToCustomer;
+    }
 
     @Override
     public List<DomainObject> listAll() {
@@ -91,5 +101,16 @@ public class CustomerServiceImpl extends AbstractMapService implements CustomerS
         customer4.getBillingAddress().setState("Kabul");
         customer4.getBillingAddress().setZipCode("334533");
         domainMap.put(4,customer4);
+    }
+
+    @Override
+    public Customer saveOrUpdateCustomerForm(CustomerForm customerForm) {
+        Customer newCustomer = customerFormToCustomer.convert(customerForm);
+
+        if(newCustomer.getUser().getId() != null) {
+            Customer existingCustomer = getById(newCustomer.getId());
+            newCustomer.getUser().setEnabled(existingCustomer.getUser().getEnabled());
+        }
+        return saveOrUpdate(newCustomer);
     }
 }

@@ -12,7 +12,7 @@ import javax.persistence.PersistenceUnit;
 import java.util.List;
 
 @Service
-@Profile("jpadao")
+@Profile("jpadao-donot use")
 public class ProductServiceJpaDaoImpl extends AbstractJpaDaoService implements ProductService {
 
     @Override

@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import rnataraj.springframework.springmvc.domain.*;
 import rnataraj.springframework.springmvc.domain.security.Role;
 import rnataraj.springframework.springmvc.enums.OrderStatus;
-import rnataraj.springframework.springmvc.services.CustomerService;
-import rnataraj.springframework.springmvc.services.ProductService;
-import rnataraj.springframework.springmvc.services.RoleService;
-import rnataraj.springframework.springmvc.services.UserService;
+import rnataraj.springframework.springmvc.services.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,6 +21,7 @@ public class SpringJPABootStrap implements ApplicationListener<ContextRefreshedE
     private CustomerService customerService;
     private UserService userService;
     private RoleService roleService;
+    private OrderService orderService;
 
     @Autowired
     public void setProductService(ProductService productService) {
@@ -43,6 +41,11 @@ public class SpringJPABootStrap implements ApplicationListener<ContextRefreshedE
     @Autowired
     public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
+    }
+
+    @Autowired
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @Override
@@ -72,6 +75,7 @@ public class SpringJPABootStrap implements ApplicationListener<ContextRefreshedE
                     userService.saveOrUpdate(user);
                 });
             }
+            roleService.saveOrUpdate(role);
         });
     }
 
@@ -104,6 +108,7 @@ public class SpringJPABootStrap implements ApplicationListener<ContextRefreshedE
                 orderDetail.setQuantity(1);
                 order.addToOrderDetails(orderDetail);
             });
+            orderService.saveOrUpdate(order);
         });
     }
 

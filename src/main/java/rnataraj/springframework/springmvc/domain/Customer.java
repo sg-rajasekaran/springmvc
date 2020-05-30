@@ -19,7 +19,7 @@ public class Customer implements DomainObject{
     //private Address shippingAddress;
 
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private User user;
 
     @Override

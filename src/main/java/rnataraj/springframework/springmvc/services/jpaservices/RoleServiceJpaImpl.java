@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
-@Profile("jpadao")
+@Profile("jpadao-donot use")
 public class RoleServiceJpaImpl extends AbstractJpaDaoService implements RoleService {
     @Override
     public List<?> listAll() {

@@ -47,7 +47,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public String saveOrUpdate(User user) {
         User savedUser = userService.saveOrUpdate(user);
-        return "redirect:/user/show/"+savedUser.getId();
+        return "redirect:user/show/"+savedUser.getId();
     }
 
     @RequestMapping("/delete/{id}")

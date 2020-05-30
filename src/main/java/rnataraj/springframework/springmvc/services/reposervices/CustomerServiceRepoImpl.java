@@ -1,4 +1,4 @@
-package rnataraj.springframework.springmvc.services.jpaservices;
+package rnataraj.springframework.springmvc.services.reposervices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -6,19 +6,23 @@ import org.springframework.stereotype.Service;
 import rnataraj.springframework.springmvc.commands.CustomerForm;
 import rnataraj.springframework.springmvc.convertors.CustomerFormToCustomer;
 import rnataraj.springframework.springmvc.domain.Customer;
+import rnataraj.springframework.springmvc.repositories.CustomerRepository;
 import rnataraj.springframework.springmvc.services.CustomerService;
-import rnataraj.springframework.springmvc.services.security.EncryptionService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import java.util.ArrayList;
 import java.util.List;
-
 @Service
-@Profile("jpadao-donot use")
-public class CustomerServiceJpaDaoImpl extends AbstractJpaDaoService implements CustomerService {
-    private EncryptionService encryptionService;
+@Profile({"springdatajpa","jpadao"})
+public class CustomerServiceRepoImpl implements CustomerService {
+
+    private CustomerRepository customerRepository;
     private CustomerFormToCustomer customerFormToCustomer;
+
+
+    @Autowired
+    public void setCustomerRepository(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     @Autowired
     public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
@@ -26,36 +30,25 @@ public class CustomerServiceJpaDaoImpl extends AbstractJpaDaoService implements 
     }
 
     @Override
-    public List<Customer> listAll() {
-        EntityManager em = emf.createEntityManager();
-        return em.createQuery("from Customer",Customer.class).getResultList();
+    public List<?> listAll() {
+        List<Customer> customers = new ArrayList<>();
+        customerRepository.findAll().forEach(customers::add);
+        return customers;
     }
 
     @Override
     public Customer getById(Integer id) {
-        EntityManager em = emf.createEntityManager();
-        return em.find(Customer.class,id);
+        return customerRepository.findById(id).get();
     }
 
     @Override
     public Customer saveOrUpdate(Customer domainObject) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        if(domainObject.getUser() != null && domainObject.getUser().getPassword() != null) {
-            encryptionService.encryptString(domainObject.getUser().getPassword());
-        }
-        Customer savedCustomer = em.merge(domainObject);
-        em.getTransaction().commit();
-        return savedCustomer;
+        return customerRepository.save(domainObject);
     }
 
     @Override
     public void delete(Integer id) {
-        EntityManager em=emf.createEntityManager();
-        em.getTransaction().begin();
-        em.remove(em.find(Customer.class,id));
-        em.getTransaction().commit();
-
+        customerRepository.deleteById(id);
     }
 
     @Override
@@ -68,4 +61,6 @@ public class CustomerServiceJpaDaoImpl extends AbstractJpaDaoService implements 
         }
         return saveOrUpdate(newCustomer);
     }
+
+
 }
