@@ -27,6 +27,8 @@ public class User implements DomainObject{
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
+    //~defaults to @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "user_id)
+    // inverseJoinColumns = @joinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
     @Override

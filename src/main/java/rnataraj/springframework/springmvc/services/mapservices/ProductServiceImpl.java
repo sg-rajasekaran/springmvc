@@ -1,7 +1,10 @@
 package rnataraj.springframework.springmvc.services.mapservices;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import rnataraj.springframework.springmvc.commands.ProductForm;
+import rnataraj.springframework.springmvc.convertors.ProductFormToProduct;
 import rnataraj.springframework.springmvc.domain.DomainObject;
 import rnataraj.springframework.springmvc.domain.Product;
 import rnataraj.springframework.springmvc.services.ProductService;
@@ -13,6 +16,13 @@ import java.util.*;
 @Service
 @Profile("map")
 public class ProductServiceImpl extends AbstractMapService implements ProductService {
+
+    private ProductFormToProduct productFormToProduct;
+
+    @Autowired
+    public void setProductFormToProduct(ProductFormToProduct productFormToProduct) {
+        this.productFormToProduct = productFormToProduct;
+    }
 
     @Override
     public List<DomainObject> listAll() {
@@ -82,5 +92,8 @@ public class ProductServiceImpl extends AbstractMapService implements ProductSer
 
     }
 
-
+    @Override
+    public Product saveOrUpdateProductForm(ProductForm productForm) {
+        return saveOrUpdate(productFormToProduct.convert(productForm));
+    }
 }

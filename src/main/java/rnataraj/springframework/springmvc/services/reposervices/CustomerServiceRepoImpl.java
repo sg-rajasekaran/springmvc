@@ -7,8 +7,10 @@ import rnataraj.springframework.springmvc.commands.CustomerForm;
 import rnataraj.springframework.springmvc.convertors.CustomerFormToCustomer;
 import rnataraj.springframework.springmvc.domain.Customer;
 import rnataraj.springframework.springmvc.repositories.CustomerRepository;
+import rnataraj.springframework.springmvc.repositories.UserRepository;
 import rnataraj.springframework.springmvc.services.CustomerService;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 @Service
@@ -16,12 +18,18 @@ import java.util.List;
 public class CustomerServiceRepoImpl implements CustomerService {
 
     private CustomerRepository customerRepository;
+    private UserRepository userRepository;
     private CustomerFormToCustomer customerFormToCustomer;
 
 
     @Autowired
     public void setCustomerRepository(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Autowired
@@ -47,7 +55,10 @@ public class CustomerServiceRepoImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public void delete(Integer id) {
+        Customer customer = customerRepository.findById(id).get();
+        userRepository.delete(customer.getUser());
         customerRepository.deleteById(id);
     }
 

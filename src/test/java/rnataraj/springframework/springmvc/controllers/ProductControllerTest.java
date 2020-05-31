@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.mockito.*;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import rnataraj.springframework.springmvc.commands.ProductForm;
+import rnataraj.springframework.springmvc.convertors.ProductToProductForm;
 import rnataraj.springframework.springmvc.domain.Product;
 import rnataraj.springframework.springmvc.services.ProductService;
 
@@ -32,6 +34,8 @@ public class ProductControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this); //initializes controller and mocks
+        //productController.setProductFormToProduct(new ProductFormToProduct());
+        productController.setProductToProductForm(new ProductToProductForm());
         mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
     }
 
@@ -71,7 +75,7 @@ public class ProductControllerTest {
         mockMvc.perform(get("/product/edit/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("product/productform"))
-                .andExpect(model().attribute("product",instanceOf(Product.class)));
+                .andExpect(model().attribute("productForm",instanceOf(ProductForm.class)));
     }
 
     @Test
@@ -83,7 +87,7 @@ public class ProductControllerTest {
         mockMvc.perform(get("/product/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("product/productform"))
-                .andExpect((model().attribute("product",instanceOf(Product.class))));
+                .andExpect((model().attribute("productForm",instanceOf(ProductForm.class))));
 
     }
 
@@ -92,7 +96,7 @@ public class ProductControllerTest {
         Integer id = 1;
         String description = "Test Description";
         BigDecimal price = new BigDecimal("12.00");
-        String imageUrl = "example.com";
+        String imageUrl = "http://example.com";
 
         Product returnProduct = new Product();
         returnProduct.setId(id);
@@ -100,21 +104,23 @@ public class ProductControllerTest {
         returnProduct.setPrice(price);
         returnProduct.setImageUrl(imageUrl);
 
-        when(productService.saveOrUpdate(ArgumentMatchers.<Product>any())).thenReturn(returnProduct);
+        when(productService.saveOrUpdateProductForm(Matchers.<ProductForm>any())).thenReturn(returnProduct);
 
-        mockMvc.perform(post("/product").param("id","1").param("description",description)
-                        .param("price","12.00")
-                .param("imageUrl", "example.com"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:product/show/1"))
-                .andExpect(model().attribute("product",instanceOf(Product.class)))
-                .andExpect(model().attribute("product",hasProperty("id",is(id))))
-                .andExpect(model().attribute("product",hasProperty("description",is(description))))
-                .andExpect(model().attribute("product",hasProperty("price",is(price))))
-                .andExpect(model().attribute("product",hasProperty("imageUrl",is(imageUrl))));
+        mockMvc.perform(post("/product")
+                .param("id","1")
+                .param("description",description)
+                .param("price","12.00")
+                .param("imageUrl", "http://example.com"))
+                        .andExpect(status().is3xxRedirection())
+                        .andExpect(view().name("redirect:product/show/1"));
+//                .andExpect(model().attribute("product",instanceOf(Product.class)))
+//                .andExpect(model().attribute("product",hasProperty("id",is(id))))
+//                .andExpect(model().attribute("product",hasProperty("description",is(description))))
+//                .andExpect(model().attribute("product",hasProperty("price",is(price))))
+//                .andExpect(model().attribute("product",hasProperty("imageUrl",is(imageUrl))));
 
-        ArgumentCaptor<Product> boundProduct = ArgumentCaptor.forClass(Product.class);
-        verify(productService).saveOrUpdate(boundProduct.capture());
+        ArgumentCaptor<ProductForm> boundProduct = ArgumentCaptor.forClass(ProductForm.class);
+        verify(productService).saveOrUpdateProductForm(boundProduct.capture());
 
         assertEquals(id, boundProduct.getValue().getId());
         assertEquals(description,boundProduct.getValue().getDescription());

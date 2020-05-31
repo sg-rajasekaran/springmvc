@@ -103,7 +103,7 @@ public class UserControllerTest {
                 .param("userName",userName)
                 .param("password",password))
                     .andExpect(status().is3xxRedirection())
-                    .andExpect(view().name("redirect:/user/show/1"))
+                    .andExpect(view().name("redirect:user/show/1"))
                     .andExpect(model().attribute("user",instanceOf(User.class)))
                     .andExpect(model().attribute("user",hasProperty("id",is(id))))
                             .andExpect(model().attribute("user",hasProperty("userName",is(userName))))

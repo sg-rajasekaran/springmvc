@@ -2,6 +2,8 @@ package rnataraj.springframework.springmvc.services.jpaservices;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import rnataraj.springframework.springmvc.commands.ProductForm;
+import rnataraj.springframework.springmvc.convertors.ProductFormToProduct;
 import rnataraj.springframework.springmvc.domain.Product;
 import rnataraj.springframework.springmvc.services.ProductService;
 import rnataraj.springframework.springmvc.services.security.EncryptionService;
@@ -14,6 +16,8 @@ import java.util.List;
 @Service
 @Profile("jpadao-donot use")
 public class ProductServiceJpaDaoImpl extends AbstractJpaDaoService implements ProductService {
+
+    private ProductFormToProduct productFormToProduct;
 
     @Override
     public List<Product> listAll() {
@@ -34,6 +38,11 @@ public class ProductServiceJpaDaoImpl extends AbstractJpaDaoService implements P
         Product savedProduct = em.merge(domainObject);
         em.getTransaction().commit();
         return savedProduct;
+    }
+
+    @Override
+    public Product saveOrUpdateProductForm(ProductForm productForm) {
+        return saveOrUpdate(productFormToProduct.convert(productForm));
     }
 
     @Override
